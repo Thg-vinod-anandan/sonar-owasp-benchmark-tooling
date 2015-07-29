@@ -5,8 +5,10 @@
  */
 package com.sonarsource.benchmark;
 
+import com.sonarsource.benchmark.domain.Constants;
 import com.sonarsource.benchmark.get.Fetcher;
-import com.sonarsource.benchmark.issues.DataGatherer;
+import com.sonarsource.benchmark.service.DataMarshaller;
+import com.sonarsource.benchmark.service.Reporter;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,21 +23,23 @@ public class Main {
 
     Fetcher fetcher = new Fetcher();
 
-//    Path path = fetcher.getFilesFromUrl("https://github.com/OWASP/Benchmark/archive/master.zip");
+//    Path path = fetcher.getFilesFromUrl(Constants.BENCHMARK_GIT_PROJECT + Constants.BENCHMARK_ZIP_PATH);
 Path path = Paths.get("/home/ganncamp/workspace/sonar-owasp-benchmark-tooling/target/Benchmark-master");
-    DataGatherer retriever = new DataGatherer();
-    retriever.readBenchmarkTests(path);
+    DataMarshaller marshal = new DataMarshaller();
+    marshal.readBenchmarkTests(path);
 
-    retriever.activateCweRules("http://localhost:9000");
+    marshal.activateCweRules("http://localhost:9000");
 
     // compile benchmark project
     // run analysis
 //    MavenCli cli = new MavenCli();
 //    cli.doMain(new String[]{"clean", "install"}, "project_dir", System.out, System.out);
 
-    retriever.addIssuesToBenchmarkTests("http://localhost:9000");
+    marshal.addIssuesToBenchmarkTests("http://localhost:9000");
 
-    System.out.println("yo");
+    Reporter reporter = new Reporter();
+    reporter.generateReports(marshal);
+
   }
 
 }

@@ -8,17 +8,24 @@ package com.sonarsource.benchmark.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class BenchmarkTest {
+
   String fileName;
   boolean vulnerable;
   String cwe;
   List<String> issueRules = new ArrayList<>();
+  boolean badResult = false;
+
 
   public BenchmarkTest(String fileName, boolean vulnerable, String cwe) {
 
     this.fileName = fileName;
     this.vulnerable = vulnerable;
     this.cwe = cwe;
+    if (vulnerable) {
+      badResult = true;
+    }
   }
 
   public String getFileName() {
@@ -41,4 +48,17 @@ public class BenchmarkTest {
     return issueRules;
   }
 
+  public boolean isBadResult() {
+
+    return badResult;
+  }
+
+  public void addIssueRule(String rule) {
+    issueRules.add(rule);
+    badResult = !vulnerable;
+  }
+
+  public int getIssueCount() {
+    return issueRules.size();
+  }
 }

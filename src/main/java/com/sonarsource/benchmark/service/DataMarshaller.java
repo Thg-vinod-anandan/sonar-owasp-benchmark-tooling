@@ -3,7 +3,7 @@
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
-package com.sonarsource.benchmark.issues;
+package com.sonarsource.benchmark.service;
 
 import com.sonarsource.benchmark.domain.BenchmarkTest;
 import com.sonarsource.benchmark.domain.Cwe;
@@ -19,9 +19,12 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
-public class DataGatherer {
+public class DataMarshaller {
+
+  private static final Logger LOGGER = Logger.getLogger(DataMarshaller.class.getName());
 
   private Map<String, Cwe> cweMap = new HashMap<>();
   private Map<String, BenchmarkTest> btMap = new HashMap<>();
@@ -29,6 +32,9 @@ public class DataGatherer {
 
 
   public void addIssuesToBenchmarkTests(String instance) {
+
+    LOGGER.info("Processing issues");
+
     Map<String,List<String>> ruleIssues = new HashMap<>();
 
     List<JSONObject> jsonIssues = fetcher.fetchIssuesFromSonarQube(instance);
@@ -42,14 +48,20 @@ public class DataGatherer {
       String testName = pieces[pieces.length - 1].replaceAll(".java", "");
       BenchmarkTest bt = btMap.get(testName);
       if (bt != null) {
-        bt.getIssueRules().add(ruleKey);
+        bt.addIssueRule(ruleKey);
       } else {
 /// log bad name...
       }
     }
+
+    for (Cwe cwe : cweMap.values()) {
+      cwe.sortResults();
+    }
   }
 
   public void readBenchmarkTests(Path path) {
+
+    LOGGER.info("Reading expected results");
 
     File file = path.resolve("expectedresults-1.1.csv").toFile();
     try {
@@ -60,14 +72,15 @@ public class DataGatherer {
         String[] pieces = line.split(",");
 
         String fileName = pieces[0];
-        String cweId = "CWE-" + pieces[3];
+        int cweNumber = Integer.valueOf(pieces[3]);
+        String cweId = "CWE-" + cweNumber;
 
         BenchmarkTest bt = new BenchmarkTest(fileName, Boolean.valueOf(pieces[2]), cweId);
         btMap.put(fileName, bt);
 
         Cwe cwe = cweMap.get(cweId);
         if (cwe == null) {
-          cwe = new Cwe(cweId);
+          cwe = new Cwe(cweNumber);
           cweMap.put(cweId, cwe);
         }
         cwe.addBenchmarkTest(bt);
@@ -80,6 +93,8 @@ public class DataGatherer {
   }
 
   public void activateCweRules(String instance) {
+
+    LOGGER.info("activating CWE rules");
 
     List<JSONObject> qualityProfiles = fetcher.fetchProfilesFromSonarQube(instance);
     String profileKey = (String) qualityProfiles.get(0).get("key");
@@ -108,4 +123,13 @@ public class DataGatherer {
     }
   }
 
+  public Map<String, Cwe> getCweMap() {
+
+    return cweMap;
+  }
+
+  public Map<String, BenchmarkTest> getBtMap() {
+
+    return btMap;
+  }
 }

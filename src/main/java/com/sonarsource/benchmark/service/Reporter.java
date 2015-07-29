@@ -49,13 +49,13 @@ public class Reporter {
       sb.append("<tr><td>");
       addLinkedCweId(cwe, sb);
       sb.append(TD).append(cwe.getRuleKeys().size())
-              .append(TD).append("<a href='").append(cwe.getId()).append(".html'>").append(cwe.getIssueCount()).append("</a>")
+              .append(TD).append(cwe.getIssueCount())
               .append(TD).append(cwe.getTruePositives().size())
               .append(TD).append(cwe.getTrueNegatives().size())
               .append(TD).append(cwe.getFalsePositives().size())
               .append(TD).append(cwe.getFalseNegatives().size())
-              .append(TD).append(String.format("%.2f%%", cwe.getPositiveAccuracy()))
-              .append(TD).append(String.format("%.2f%%", cwe.getNegativeAccuracy()))
+              .append(TD).append("<a href='").append(cwe.getId()).append(".html#fp'>").append(String.format("%.2f%%", cwe.getPositiveAccuracy())).append("</a>")
+              .append(TD).append("<a href='").append(cwe.getId()).append(".html#fn'>").append(String.format("%.2f%%", cwe.getNegativeAccuracy())).append("</a>")
               .append("</tr>");
     }
     sb.append("</table>");
@@ -73,7 +73,7 @@ public class Reporter {
     sb.append("<a href='#fp'>False Positives (").append(cwe.getFalsePositives().size()).append(")</a> | ");
     sb.append("<a href='#fn'>False Negatives (").append(cwe.getFalseNegatives().size()).append(")</a>");
 
-    sb.append("<a id='fp' name='fp'></a><h3>False Positives</h3>");
+    sb.append("<a id='fp' name='fp'></a><h3>False Positives (").append(cwe.getFalsePositives().size()).append(")</h3>");
 
     sb.append("<table>");
     for (BenchmarkTest bt : cwe.getFalsePositives()) {
@@ -89,7 +89,7 @@ public class Reporter {
     }
     sb.append("</table>");
 
-    sb.append("<a id='fn' name='fn'></a><h3>False Negatives</h3>");
+    sb.append("<a id='fn' name='fn'></a><h3>False Negatives (").append(cwe.getFalseNegatives().size()).append(")</h3>");
     sb.append("<table>");
     for (BenchmarkTest bt : cwe.getFalseNegatives()) {
       sb.append("<tr><td>");

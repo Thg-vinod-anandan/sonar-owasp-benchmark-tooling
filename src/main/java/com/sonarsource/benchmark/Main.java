@@ -8,10 +8,12 @@ package com.sonarsource.benchmark;
 import com.sonarsource.benchmark.domain.Constants;
 import com.sonarsource.benchmark.get.Fetcher;
 import com.sonarsource.benchmark.service.DataMarshaller;
+import com.sonarsource.benchmark.service.ExternalProcessManager;
 import com.sonarsource.benchmark.service.Reporter;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 
 public class Main {
 
@@ -22,20 +24,24 @@ public class Main {
   public static void main(String [] args) {
 
     Fetcher fetcher = new Fetcher();
-
 //    Path path = fetcher.getFilesFromUrl(Constants.BENCHMARK_GIT_PROJECT + Constants.BENCHMARK_ZIP_PATH);
 Path path = Paths.get("/home/ganncamp/workspace/sonar-owasp-benchmark-tooling/target/Benchmark-master");
+
     DataMarshaller marshal = new DataMarshaller();
     marshal.readBenchmarkTests(path);
 
-    marshal.activateCweRules("http://localhost:9000");
+    ExternalProcessManager epm = new ExternalProcessManager();
+//    epm.compile(path);
 
-    // compile benchmark project
-    // run analysis
-//    MavenCli cli = new MavenCli();
-//    cli.doMain(new String[]{"clean", "install"}, "project_dir", System.out, System.out);
+    String instance = epm.startOrchestrator();
 
-    marshal.addIssuesToBenchmarkTests("http://localhost:9000");
+    marshal.activateCweRules(instance);
+
+    epm.analyze(path);
+
+    marshal.addIssuesToBenchmarkTests(instance);
+
+    epm.stopOrchestrator();
 
     Reporter reporter = new Reporter();
     reporter.generateReports(marshal);

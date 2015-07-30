@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 SonarSource SA
+ * Copyright (C) 2015-2014 SonarSource SA
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
@@ -31,7 +31,7 @@ Path path = Paths.get("/home/ganncamp/workspace/sonar-owasp-benchmark-tooling/ta
     marshal.readBenchmarkTests(path);
 
     ExternalProcessManager epm = new ExternalProcessManager();
-//    epm.compile(path);
+    epm.compile(path);
 
     String instance = epm.startOrchestrator();
 

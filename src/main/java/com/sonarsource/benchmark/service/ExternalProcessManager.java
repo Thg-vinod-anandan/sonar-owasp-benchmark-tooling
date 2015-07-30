@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 SonarSource SA
+ * Copyright (C) 2015-2014 SonarSource SA
  * All rights reserved
  * mailto:contact AT sonarsource DOT com
  */
@@ -14,6 +14,7 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
@@ -28,10 +29,12 @@ public class ExternalProcessManager {
   public void compile(Path targetProject) {
 
     InvocationRequest request = new DefaultInvocationRequest();
+
     request.setPomFile(targetProject.resolve("/pom.xml").toFile());
     request.setGoals(Arrays.asList("compile"));
 
     Invoker invoker = new DefaultInvoker();
+    invoker.setMavenHome(new File("/usr/bin/mvn"));
     try {
       invoker.execute(request);
     } catch (MavenInvocationException e) {

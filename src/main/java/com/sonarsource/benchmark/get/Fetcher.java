@@ -5,7 +5,7 @@
  */
 package com.sonarsource.benchmark.get;
 
-import com.sonarsource.benchmark.domain.RuleException;
+import com.sonarsource.benchmark.domain.ReportException;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -41,13 +41,11 @@ public class Fetcher {
     return fetchPaginatedDataFromSonarQube(baseUrl, "rules");
   }
 
-
   public List<JSONObject> fetchIssuesFromSonarQube(String instance) {
 
     String path = "/api/issues/search?ps=500";
     return fetchPaginatedDataFromSonarQube(instance + path, "issues");
   }
-
 
   public List<JSONObject> fetchProfilesFromSonarQube(String instance) {
     JSONObject rawResult = getJsonFromUrl(instance + "/api/rules/app");
@@ -55,13 +53,13 @@ public class Fetcher {
   }
 
 
-  protected List<JSONObject> fetchPaginatedDataFromSonarQube(String url, String dataId) {
+  public List<JSONObject> fetchPaginatedDataFromSonarQube(String url, String dataId) {
 
     int page = 1;
-    long expected = -1;
+    long expected = 100;
 
     ArrayList<JSONObject> results = new ArrayList<>();
-    while (expected < 0 || expected > results.size()) {
+    while (expected > results.size()) {
 
       JSONObject rawResult = getJsonFromUrl(url + "&p=" + page);
       results.addAll((JSONArray) rawResult.get(dataId));
@@ -72,15 +70,12 @@ public class Fetcher {
 
   }
 
-
-  public JSONObject getJsonFromUrl(String url) {
-
-    return getJsonFromUrl(url, null, null);
-  }
-
-
   public JSONObject getJsonFromPost(String url, String login, String password, Map<String,String> params){
-    Client client = getClient(login, password);
+
+    Client client = ClientBuilder.newClient();
+    if (login != null && password != null) {
+      client.register(HttpAuthenticationFeature.basic(login, password));
+    }
 
     WebTarget webResource = client.target(url);
 
@@ -91,72 +86,58 @@ public class Fetcher {
 
     Response response = webResource.request().accept("application/json").post(Entity.form(formData));
 
-    checkStatus(url, client, response);
+    checkStatusCloseResources(url, client, response);
 
     String responseStr = response.readEntity(String.class);
-    response.close();
-    client.close();
 
     JSONParser parser = new JSONParser();
     try {
       return (JSONObject)parser.parse(responseStr);
     } catch (ParseException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
     }
 
   }
 
+  private JSONObject getJsonFromUrl(String url) {
 
-  public JSONObject getJsonFromUrl(String url, String login, String password) {
-
-    Client client = getClient(login, password);
+    Client client = ClientBuilder.newClient();
 
     WebTarget webResource = client.target(url);
 
     Response response = webResource.request().accept("application/json").get(Response.class);
 
-    checkStatus(url, client, response);
+    checkStatusCloseResources(url, client, response);
 
     String responseStr = response.readEntity(String.class);
-    response.close();
-    client.close();
 
     JSONParser parser = new JSONParser();
     try {
       return (JSONObject)parser.parse(responseStr);
     } catch (ParseException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
     }
   }
 
-  protected void checkStatus(String url, Client client, Response response) {
+  private void checkStatusCloseResources(String url, Client client, Response response) {
 
     int status = response.getStatus();
+    response.close();
+    client.close();
     if (status < 200 || status > 299) {
-      response.close();
-      client.close();
-      throw new RuleException("Failed : HTTP error code: "
+      throw new ReportException("Failed : HTTP error code: "
               + response.getStatus() + " for " + url);
     }
-  }
-
-  protected Client getClient(String login, String password) {
-
-    Client client = ClientBuilder.newClient();
-    if (login != null && password != null) {
-      client.register(HttpAuthenticationFeature.basic(login, password));
-    }
-    return client;
   }
 
   public Path getFilesFromUrl(String url) {
 
     Path root = null;
 
-    Client client = getClient(null, null);
+    Client client = ClientBuilder.newClient();
     WebTarget webResource = client.target(url);
     Response response = webResource.request().accept("application/zip").get(Response.class);
-    checkStatus(url, client, response);
+    checkStatusCloseResources(url, client, response);
 
     FileOutputStream output = null;
     try(InputStream is = response.readEntity(InputStream.class); ZipInputStream zin = new ZipInputStream(is)) {
@@ -189,7 +170,7 @@ public class Fetcher {
 
       }
     } catch (IOException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
 
     } finally {
       if (output != null) {

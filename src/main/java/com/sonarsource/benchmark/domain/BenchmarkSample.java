@@ -9,20 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BenchmarkTest {
+public class BenchmarkSample {
 
   String fileName;
   boolean vulnerable;
-  String cwe;
   List<String> issueRules = new ArrayList<>();
   boolean badResult = false;
 
 
-  public BenchmarkTest(String fileName, boolean vulnerable, String cwe) {
+  public BenchmarkSample(String fileName, boolean vulnerable) {
 
     this.fileName = fileName;
     this.vulnerable = vulnerable;
-    this.cwe = cwe;
     if (vulnerable) {
       badResult = true;
     }
@@ -38,18 +36,12 @@ public class BenchmarkTest {
     return vulnerable;
   }
 
-  public String getCwe() {
-
-    return cwe;
-  }
-
   public List<String> getIssueRules() {
 
     return issueRules;
   }
 
   public boolean isBadResult() {
-
     return badResult;
   }
 

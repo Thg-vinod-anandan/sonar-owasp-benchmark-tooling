@@ -7,7 +7,7 @@ package com.sonarsource.benchmark.service;
 
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.SonarRunner;
-import com.sonarsource.benchmark.domain.RuleException;
+import com.sonarsource.benchmark.domain.ReportException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -30,15 +30,14 @@ public class ExternalProcessManager {
 
     InvocationRequest request = new DefaultInvocationRequest();
 
-    request.setPomFile(targetProject.resolve("/pom.xml").toFile());
+    request.setPomFile(targetProject.resolve("pom.xml").toFile());
     request.setGoals(Arrays.asList("compile"));
 
     Invoker invoker = new DefaultInvoker();
-    invoker.setMavenHome(new File("/usr/bin/mvn"));
     try {
       invoker.execute(request);
     } catch (MavenInvocationException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
     }
   }
 
@@ -54,8 +53,9 @@ public class ExternalProcessManager {
             .setProjectName("project")
             .setProjectVersion("1")
             .setSourceEncoding("UTF-8")
-            .setSourceDirs("src/main/java");
-//            .setBinaries("target/classes")
+            .setSourceDirs("src/main/java")
+            .setProperty("sonar.java.binaries", "target/classes");
+            // sonar.java.libraries
 
     orchestrator.executeBuild(build, false);
     // query server every minute, 1=log each query result

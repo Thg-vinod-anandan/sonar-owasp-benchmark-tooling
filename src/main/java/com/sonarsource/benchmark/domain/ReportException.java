@@ -5,13 +5,13 @@
  */
 package com.sonarsource.benchmark.domain;
 
-public class RuleException extends RuntimeException {
+public class ReportException extends RuntimeException {
 
-  public RuleException(String message) {
+  public ReportException(String message) {
     super(message);
   }
 
-  public RuleException(Exception e) {
+  public ReportException(Exception e) {
     super(e);
   }
 }

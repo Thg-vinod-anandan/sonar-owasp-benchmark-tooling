@@ -11,16 +11,16 @@ import java.util.List;
 
 public class Cwe {
 
-  int number;
-  List<String> ruleKeys = new ArrayList<>();
-  List<BenchmarkTest> benchmarkTests = new ArrayList<>();
-  List<BenchmarkTest> falsePositives = new ArrayList<>();
-  List<BenchmarkTest> falseNegatives = new ArrayList<>();
-  List<BenchmarkTest> truePositives = new ArrayList<>();
-  List<BenchmarkTest> trueNegatives = new ArrayList<>();
-  int issueCount = 0;
-  float positiveAccuracy = 0;
-  float negativeAccuracy = 0;
+  private int number;
+  private List<String> ruleKeys = new ArrayList<>();
+  private List<BenchmarkSample> benchmarkSamples = new ArrayList<>();
+  private List<BenchmarkSample> falsePositives = new ArrayList<>();
+  private List<BenchmarkSample> falseNegatives = new ArrayList<>();
+  private List<BenchmarkSample> truePositives = new ArrayList<>();
+  private List<BenchmarkSample> trueNegatives = new ArrayList<>();
+  private int issueCount = 0;
+  private float positiveAccuracy = 0;
+  private float negativeAccuracy = 0;
 
   public Cwe(int number) {
 
@@ -29,7 +29,7 @@ public class Cwe {
 
   public void sortResults() {
 
-    for (BenchmarkTest bt : benchmarkTests) {
+    for (BenchmarkSample bt : benchmarkSamples) {
 
       issueCount += bt.getIssueCount();
 
@@ -70,41 +70,26 @@ public class Cwe {
     return ruleKeys;
   }
 
-  public void setRuleKeys(List<String> ruleKeys) {
-
-    this.ruleKeys = ruleKeys;
+  public void addBenchmarkSample(BenchmarkSample bt) {
+    benchmarkSamples.add(bt);
   }
 
-  public void addBenchmarkTest(BenchmarkTest bt) {
-    benchmarkTests.add(bt);
-  }
-
-  public List<BenchmarkTest> getBenchmarkTests() {
-
-    return benchmarkTests;
-  }
-
-  public void setBenchmarkTests(List<BenchmarkTest> benchmarkTests) {
-
-    this.benchmarkTests = benchmarkTests;
-  }
-
-  public List<BenchmarkTest> getFalsePositives() {
+  public List<BenchmarkSample> getFalsePositives() {
 
     return falsePositives;
   }
 
-  public List<BenchmarkTest> getFalseNegatives() {
+  public List<BenchmarkSample> getFalseNegatives() {
 
     return falseNegatives;
   }
 
-  public List<BenchmarkTest> getTruePositives() {
+  public List<BenchmarkSample> getTruePositives() {
 
     return truePositives;
   }
 
-  public List<BenchmarkTest> getTrueNegatives() {
+  public List<BenchmarkSample> getTrueNegatives() {
 
     return trueNegatives;
   }
@@ -127,5 +112,10 @@ public class Cwe {
   public int getNumber() {
 
     return number;
+  }
+
+  public List<BenchmarkSample> getBenchmarkSamples() {
+
+    return benchmarkSamples;
   }
 }

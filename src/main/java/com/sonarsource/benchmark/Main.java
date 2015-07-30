@@ -12,7 +12,6 @@ import com.sonarsource.benchmark.service.ExternalProcessManager;
 import com.sonarsource.benchmark.service.Reporter;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 
 public class Main {
@@ -24,8 +23,7 @@ public class Main {
   public static void main(String [] args) {
 
     Fetcher fetcher = new Fetcher();
-//    Path path = fetcher.getFilesFromUrl(Constants.BENCHMARK_GIT_PROJECT + Constants.BENCHMARK_ZIP_PATH);
-Path path = Paths.get("/home/ganncamp/workspace/sonar-owasp-benchmark-tooling/target/Benchmark-master");
+    Path path = fetcher.getFilesFromUrl(Constants.BENCHMARK_GIT_PROJECT + Constants.BENCHMARK_ZIP_PATH);
 
     DataMarshaller marshal = new DataMarshaller();
     marshal.readBenchmarkTests(path);

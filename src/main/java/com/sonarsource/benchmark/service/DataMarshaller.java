@@ -5,9 +5,9 @@
  */
 package com.sonarsource.benchmark.service;
 
-import com.sonarsource.benchmark.domain.BenchmarkTest;
+import com.sonarsource.benchmark.domain.BenchmarkSample;
 import com.sonarsource.benchmark.domain.Cwe;
-import com.sonarsource.benchmark.domain.RuleException;
+import com.sonarsource.benchmark.domain.ReportException;
 import com.sonarsource.benchmark.get.Fetcher;
 import org.json.simple.JSONObject;
 
@@ -27,7 +27,7 @@ public class DataMarshaller {
   private static final Logger LOGGER = Logger.getLogger(DataMarshaller.class.getName());
 
   private Map<String, Cwe> cweMap = new HashMap<>();
-  private Map<String, BenchmarkTest> btMap = new HashMap<>();
+  private Map<String, BenchmarkSample> btMap = new HashMap<>();
   private Fetcher fetcher = new Fetcher();
 
 
@@ -35,9 +35,10 @@ public class DataMarshaller {
 
     LOGGER.info("Processing issues");
 
-    Map<String,List<String>> ruleIssues = new HashMap<>();
+    handleIssues(fetcher.fetchIssuesFromSonarQube(instance));
+  }
 
-    List<JSONObject> jsonIssues = fetcher.fetchIssuesFromSonarQube(instance);
+  protected void handleIssues(List<JSONObject> jsonIssues) {
 
     for (Object obj : jsonIssues) {
       JSONObject jObj = (JSONObject) obj;
@@ -46,11 +47,11 @@ public class DataMarshaller {
 
       String[] pieces = filePath.split("/");
       String testName = pieces[pieces.length - 1].replaceAll(".java", "");
-      BenchmarkTest bt = btMap.get(testName);
+      BenchmarkSample bt = btMap.get(testName);
       if (bt != null) {
         bt.addIssueRule(ruleKey);
       } else {
-/// log bad name...
+        LOGGER.info("Unrecognized fileName: " + testName);
       }
     }
 
@@ -75,7 +76,7 @@ public class DataMarshaller {
         int cweNumber = Integer.valueOf(pieces[3]);
         String cweId = "CWE-" + cweNumber;
 
-        BenchmarkTest bt = new BenchmarkTest(fileName, Boolean.valueOf(pieces[2]), cweId);
+        BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
         btMap.put(fileName, bt);
 
         Cwe cwe = cweMap.get(cweId);
@@ -83,12 +84,12 @@ public class DataMarshaller {
           cwe = new Cwe(cweNumber);
           cweMap.put(cweId, cwe);
         }
-        cwe.addBenchmarkTest(bt);
+        cwe.addBenchmarkSample(bt);
 
       }
 
     } catch (IOException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
     }
   }
 
@@ -128,8 +129,4 @@ public class DataMarshaller {
     return cweMap;
   }
 
-  public Map<String, BenchmarkTest> getBtMap() {
-
-    return btMap;
-  }
 }

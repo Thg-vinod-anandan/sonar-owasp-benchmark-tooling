@@ -5,10 +5,10 @@
  */
 package com.sonarsource.benchmark.service;
 
-import com.sonarsource.benchmark.domain.BenchmarkTest;
+import com.sonarsource.benchmark.domain.BenchmarkSample;
 import com.sonarsource.benchmark.domain.Constants;
 import com.sonarsource.benchmark.domain.Cwe;
-import com.sonarsource.benchmark.domain.RuleException;
+import com.sonarsource.benchmark.domain.ReportException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +23,9 @@ public class Reporter {
   private static final Logger LOGGER = Logger.getLogger(Reporter.class.getName());
   private static final String REPORT_PATH = "target/reports/";
   private static final String TD = "</td><td>";
+  private static final String TR_TD = "<tr><td>";
+  private static final String TABLE_OPEN = "<table>";
+  private static final String TABLE_CLOSE = "</table>";
 
   private String css = "";
 
@@ -51,7 +54,7 @@ public class Reporter {
 
       generateBadResultsReport(cwe);
 
-      sb.append("<tr><td>");
+      sb.append(TR_TD);
       addLinkedCweId(cwe, sb);
       sb.append(TD).append(cwe.getRuleKeys().size())
               .append(TD).append(cwe.getIssueCount())
@@ -63,7 +66,7 @@ public class Reporter {
               .append(TD).append("<a href='").append(cwe.getId()).append(".html#fn'>").append(String.format("%.2f%%", cwe.getNegativeAccuracy())).append("</a>")
               .append("</tr>");
     }
-    sb.append("</table>");
+    sb.append(TABLE_CLOSE);
 
     writeFile(REPORT_PATH + "summary.html", sb.toString());
   }
@@ -80,9 +83,9 @@ public class Reporter {
 
     sb.append("<a id='fp' name='fp'></a><h3>False Positives (").append(cwe.getFalsePositives().size()).append(")</h3>");
 
-    sb.append("<table>");
-    for (BenchmarkTest bt : cwe.getFalsePositives()) {
-      sb.append("<tr><td>");
+    sb.append(TABLE_OPEN);
+    for (BenchmarkSample bt : cwe.getFalsePositives()) {
+      sb.append(TR_TD);
       for (String rule : bt.getIssueRules()) {
         sb.append(rule).append(" ");
       }
@@ -92,19 +95,19 @@ public class Reporter {
               .append(bt.getFileName()).append(".java'>");
       sb.append(bt.getFileName()).append("</a></td></tr>");
     }
-    sb.append("</table>");
+    sb.append(TABLE_CLOSE);
 
     sb.append("<a id='fn' name='fn'></a><h3>False Negatives (").append(cwe.getFalseNegatives().size()).append(")</h3>");
-    sb.append("<table>");
-    for (BenchmarkTest bt : cwe.getFalseNegatives()) {
-      sb.append("<tr><td>");
+    sb.append(TABLE_OPEN);
+    for (BenchmarkSample bt : cwe.getFalseNegatives()) {
+      sb.append(TR_TD);
       sb.append("<a href='")
               .append(Constants.BENCHMARK_GIT_PROJECT)
               .append(Constants.BENCHMARK_TEST_PATH)
               .append(bt.getFileName()).append(".java'>");
       sb.append(bt.getFileName()).append("</a></td></tr>");
     }
-    sb.append("</table>");
+    sb.append(TABLE_CLOSE);
 
     writeFile(REPORT_PATH + cwe.getId() + ".html", sb.toString());
   }
@@ -143,9 +146,9 @@ public class Reporter {
       writer.close();
 
     } catch (FileNotFoundException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
     } catch (UnsupportedEncodingException e) {
-      throw new RuleException(e);
+      throw new ReportException(e);
     }
   }
 

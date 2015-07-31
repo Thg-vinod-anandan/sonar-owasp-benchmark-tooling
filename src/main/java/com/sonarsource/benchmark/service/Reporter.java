@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class Reporter {
 
   private static final Logger LOGGER = Logger.getLogger(Reporter.class.getName());
-  private static final String REPORT_PATH = "target/reports/";
+  private static final String REPORT_PATH = "target/reports/owasp-benchmark/";
   private static final String TD = "</td><td>";
   private static final String TR_TD = "<tr><td>";
   private static final String TABLE_OPEN = "<table>";

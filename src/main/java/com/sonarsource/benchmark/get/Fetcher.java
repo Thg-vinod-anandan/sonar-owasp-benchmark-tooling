@@ -52,7 +52,6 @@ public class Fetcher {
     return (List<JSONObject>) rawResult.get("qualityprofiles");
   }
 
-
   public List<JSONObject> fetchPaginatedDataFromSonarQube(String url, String dataId) {
 
     int page = 1;
@@ -86,9 +85,12 @@ public class Fetcher {
 
     Response response = webResource.request().accept("application/json").post(Entity.form(formData));
 
-    checkStatusCloseResources(url, client, response);
+    checkStatus(url, client, response);
 
     String responseStr = response.readEntity(String.class);
+
+    response.close();
+    client.close();
 
     JSONParser parser = new JSONParser();
     try {
@@ -107,9 +109,12 @@ public class Fetcher {
 
     Response response = webResource.request().accept("application/json").get(Response.class);
 
-    checkStatusCloseResources(url, client, response);
+    checkStatus(url, client, response);
 
     String responseStr = response.readEntity(String.class);
+
+    response.close();
+    client.close();
 
     JSONParser parser = new JSONParser();
     try {
@@ -119,12 +124,12 @@ public class Fetcher {
     }
   }
 
-  private void checkStatusCloseResources(String url, Client client, Response response) {
+  private void checkStatus(String url, Client client, Response response) {
 
     int status = response.getStatus();
-    response.close();
-    client.close();
     if (status < 200 || status > 299) {
+      response.close();
+      client.close();
       throw new ReportException("Failed : HTTP error code: "
               + response.getStatus() + " for " + url);
     }
@@ -137,7 +142,7 @@ public class Fetcher {
     Client client = ClientBuilder.newClient();
     WebTarget webResource = client.target(url);
     Response response = webResource.request().accept("application/zip").get(Response.class);
-    checkStatusCloseResources(url, client, response);
+    checkStatus(url, client, response);
 
     FileOutputStream output = null;
     try(InputStream is = response.readEntity(InputStream.class); ZipInputStream zin = new ZipInputStream(is)) {

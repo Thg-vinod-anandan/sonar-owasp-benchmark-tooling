@@ -52,7 +52,7 @@ public class Reporter {
 
     for (Cwe cwe : gatherer.getCweMap().values()) {
 
-      generateBadResultsReport(cwe);
+      writeBadResultsReport(cwe);
 
       sb.append(TR_TD);
       addLinkedCweId(cwe, sb);
@@ -71,7 +71,12 @@ public class Reporter {
     writeFile(REPORT_PATH + "summary.html", sb.toString());
   }
 
-  public void generateBadResultsReport(Cwe cwe) {
+  public void writeBadResultsReport(Cwe cwe) {
+
+    writeFile(REPORT_PATH + cwe.getId() + ".html", generateBadResultsReport(cwe));
+  }
+
+  protected String generateBadResultsReport(Cwe cwe) {
 
     StringBuilder sb = getHtmlStringBuilder();
     sb.append("<h2>");
@@ -109,7 +114,7 @@ public class Reporter {
     }
     sb.append(TABLE_CLOSE);
 
-    writeFile(REPORT_PATH + cwe.getId() + ".html", sb.toString());
+    return sb.toString();
   }
 
   protected void addLinkedCweId(Cwe cwe, StringBuilder sb) {

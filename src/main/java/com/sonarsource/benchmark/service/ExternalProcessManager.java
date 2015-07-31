@@ -14,7 +14,6 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 

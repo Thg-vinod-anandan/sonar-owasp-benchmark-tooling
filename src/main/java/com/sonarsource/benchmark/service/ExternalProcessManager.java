@@ -57,7 +57,6 @@ public class ExternalProcessManager {
             .setProperty("sonar.java.binaries", "target/classes");
             // sonar.java.libraries
 
-
     orchestrator.executeBuild(build, false);
     // query server every minute, 1=log each query result
     new SynchronousAnalyzer(orchestrator.getServer(), 60 * 1000, 1).waitForDone();

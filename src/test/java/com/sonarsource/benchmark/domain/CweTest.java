@@ -37,8 +37,8 @@ public class CweTest {
     assertThat(cwe.getTruePositives()).hasSize(1);
     assertThat(cwe.getFalsePositives()).hasSize(1);
     assertThat(cwe.getTrueNegatives()).hasSize(1);
-    assertThat(cwe.getPositiveAccuracy()).isGreaterThanOrEqualTo((float)50.0).isLessThanOrEqualTo((float)51.0);
-    assertThat(cwe.getNegativeAccuracy()).isGreaterThanOrEqualTo((float)50.0).isLessThanOrEqualTo((float)51.0);
+    assertThat(cwe.getPositiveAccuracyPercentage()).isGreaterThanOrEqualTo((float)50.0).isLessThanOrEqualTo((float)51.0);
+    assertThat(cwe.getNegativeAccuracyPercentage()).isGreaterThanOrEqualTo((float)50.0).isLessThanOrEqualTo((float)51.0);
   }
 
 }

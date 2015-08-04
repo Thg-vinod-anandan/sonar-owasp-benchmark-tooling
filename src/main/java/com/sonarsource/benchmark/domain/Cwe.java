@@ -19,8 +19,8 @@ public class Cwe {
   private List<BenchmarkSample> truePositives = new ArrayList<>();
   private List<BenchmarkSample> trueNegatives = new ArrayList<>();
   private int issueCount = 0;
-  private float positiveAccuracy = 0;
-  private float negativeAccuracy = 0;
+  private float positiveAccuracyPercentage = 0;
+  private float negativeAccuracyPercentage = 0;
 
   public Cwe(int number) {
 
@@ -50,8 +50,8 @@ public class Cwe {
 
     int expectedPositives = truePositives.size() + falseNegatives.size();
     int expectedNegatives = trueNegatives.size() + falsePositives.size();
-    positiveAccuracy = ((float)truePositives.size()/expectedPositives) * 100;
-    negativeAccuracy = ((float)trueNegatives.size()/expectedNegatives) * 100;
+    positiveAccuracyPercentage = ((float)truePositives.size()/expectedPositives) * 100;
+    negativeAccuracyPercentage = ((float)trueNegatives.size()/expectedNegatives) * 100;
 
   }
 
@@ -99,14 +99,14 @@ public class Cwe {
     return issueCount;
   }
 
-  public float getPositiveAccuracy() {
+  public float getPositiveAccuracyPercentage() {
 
-    return positiveAccuracy;
+    return positiveAccuracyPercentage;
   }
 
-  public float getNegativeAccuracy() {
+  public float getNegativeAccuracyPercentage() {
 
-    return negativeAccuracy;
+    return negativeAccuracyPercentage;
   }
 
   public int getNumber() {

@@ -26,6 +26,7 @@ public class Reporter {
   private static final String TR_TD = "<tr><td>";
   private static final String TABLE_OPEN = "<table>";
   private static final String TABLE_CLOSE = "</table>";
+  public static final String A_HREF = "<a href='";
 
   private String css = "";
 
@@ -62,8 +63,8 @@ public class Reporter {
               .append(TD).append(cwe.getTrueNegatives().size())
               .append(TD).append(cwe.getFalsePositives().size())
               .append(TD).append(cwe.getFalseNegatives().size())
-              .append(TD).append("<a href='").append(cwe.getId()).append(".html#fp'>").append(String.format("%.2f%%", cwe.getPositiveAccuracy())).append("</a>")
-              .append(TD).append("<a href='").append(cwe.getId()).append(".html#fn'>").append(String.format("%.2f%%", cwe.getNegativeAccuracy())).append("</a>")
+              .append(TD).append(A_HREF).append(cwe.getId()).append(".html#fp'>").append(String.format("%.2f%%", cwe.getPositiveAccuracyPercentage())).append("</a>")
+              .append(TD).append(A_HREF).append(cwe.getId()).append(".html#fn'>").append(String.format("%.2f%%", cwe.getNegativeAccuracyPercentage())).append("</a>")
               .append("</tr>");
     }
     sb.append(TABLE_CLOSE);
@@ -94,7 +95,7 @@ public class Reporter {
       for (String rule : bt.getIssueRules()) {
         sb.append(rule).append(" ");
       }
-      sb.append(TD).append("<a href='")
+      sb.append(TD).append(A_HREF)
               .append(Constants.BENCHMARK_GIT_PROJECT)
               .append(Constants.BENCHMARK_TEST_PATH)
               .append(bt.getFileName()).append(".java'>");
@@ -106,7 +107,7 @@ public class Reporter {
     sb.append(TABLE_OPEN);
     for (BenchmarkSample bt : cwe.getFalseNegatives()) {
       sb.append(TR_TD);
-      sb.append("<a href='")
+      sb.append(A_HREF)
               .append(Constants.BENCHMARK_GIT_PROJECT)
               .append(Constants.BENCHMARK_TEST_PATH)
               .append(bt.getFileName()).append(".java'>");
@@ -119,7 +120,7 @@ public class Reporter {
 
   protected void addLinkedCweId(Cwe cwe, StringBuilder sb) {
 
-    sb.append("<a href='").append(Constants.CWE_URL_ROOT).append(cwe.getNumber()).append("'>")
+    sb.append(A_HREF).append(Constants.CWE_URL_ROOT).append(cwe.getNumber()).append("'>")
             .append(cwe.getId())
             .append("</a>");
   }

@@ -73,7 +73,7 @@ public class DataMarshaller {
         String[] pieces = line.split(",");
 
         String fileName = pieces[0];
-        int cweNumber = Integer.valueOf(pieces[3]);
+        int cweNumber = Integer.parseInt(pieces[3]);
         String cweId = "CWE-" + cweNumber;
 
         BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
@@ -95,6 +95,8 @@ public class DataMarshaller {
 
   public void activateCweRules(String instance) {
 
+    String admin = "admin";
+
     LOGGER.info("activating CWE rules");
 
     List<JSONObject> qualityProfiles = fetcher.fetchProfilesFromSonarQube(instance);
@@ -104,7 +106,7 @@ public class DataMarshaller {
     params.put("activation", "true");
     params.put("profile_key", profileKey);
 
-    fetcher.getJsonFromPost(instance + "/api/qualityprofiles/deactivate_rules", "admin", "admin", params);
+    fetcher.getJsonFromPost(instance + "/api/qualityprofiles/deactivate_rules", admin, admin, params);
 
     for (Cwe cwe : cweMap.values()) {
       // not possible to set field list (f=) to just key, so set it to "internalKey" so we don't get all fields
@@ -114,12 +116,12 @@ public class DataMarshaller {
         cwe.addRuleKey((String) jobj.get("key"));
       }
 
-      if (rules.size() > 0) {
+      if (!rules.isEmpty()) {
         params = new HashMap();
         params.put("profile_key", profileKey);
         params.put("q", cwe.getId());
 
-        fetcher.getJsonFromPost(instance + "/api/qualityprofiles/activate_rules", "admin", "admin", params);
+        fetcher.getJsonFromPost(instance + "/api/qualityprofiles/activate_rules", admin, admin, params);
       }
     }
   }

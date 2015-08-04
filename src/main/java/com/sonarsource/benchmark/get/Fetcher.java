@@ -124,7 +124,7 @@ public class Fetcher {
     }
   }
 
-  private void checkStatus(String url, Client client, Response response) {
+  private static void checkStatus(String url, Client client, Response response) {
 
     int status = response.getStatus();
     if (status < 200 || status > 299) {

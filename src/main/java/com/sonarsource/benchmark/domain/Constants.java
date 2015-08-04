@@ -10,4 +10,8 @@ public class Constants {
   public static final String BENCHMARK_GIT_PROJECT = "https://github.com/OWASP/Benchmark/";
   public static final String BENCHMARK_ZIP_PATH = "archive/master.zip";
   public static final String BENCHMARK_TEST_PATH = "tree/master/src/main/java/org/owasp/benchmark/testcode/";
+
+  private Constants(){
+    // Nothing to see here. Move along.
+  }
 }

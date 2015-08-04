@@ -18,7 +18,12 @@ public class TestUtilities {
   protected DataMarshaller getDataMarshallerWithBenchmarkTests(){
     DataMarshaller dm = new DataMarshaller();
 
-    Path path = Paths.get(DataMarshallerTest.class.getResource("/service/").getPath());
+    String here = DataMarshallerTest.class.getResource("/service/").getPath();
+    if (System.getProperty("os.name").contains("indow")) {
+      here = here.substring(1);
+    }
+
+    Path path = Paths.get(here);
     dm.readBenchmarkTests(path);
 
     return dm;

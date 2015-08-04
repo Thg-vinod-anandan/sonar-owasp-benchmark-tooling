@@ -16,16 +16,22 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 
 public class ExternalProcessManager {
 
   private static final String SONAR_VERSION = "5.1";
 
+  private static final Logger LOGGER = Logger.getLogger(ExternalProcessManager.class.getName());
+
+
   private Orchestrator orchestrator = null;
 
 
   public void compile(Path targetProject) {
+
+    LOGGER.info("Compiling project at " + targetProject);
 
     InvocationRequest request = new DefaultInvocationRequest();
 
@@ -41,6 +47,8 @@ public class ExternalProcessManager {
   }
 
   public void analyze(Path targetProject) {
+
+    LOGGER.info("Analzying project at " + targetProject);
 
     SonarRunner build = SonarRunner.create(targetProject.toFile())
             .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx2048m -server")
@@ -64,6 +72,8 @@ public class ExternalProcessManager {
 
   public String startOrchestrator() {
 
+    LOGGER.info("Starting platform");
+
     if (orchestrator == null) {
       orchestrator = Orchestrator
               .builderEnv()
@@ -77,11 +87,13 @@ public class ExternalProcessManager {
               .build();
 
       orchestrator.start();
+      LOGGER.info("Platform available at " + orchestrator.getServer().getUrl());
     }
     return orchestrator.getServer().getUrl();
   }
 
   public void stopOrchestrator() {
+    LOGGER.info("Shutting platform down.");
 
     if (orchestrator != null) {
       orchestrator.stop();

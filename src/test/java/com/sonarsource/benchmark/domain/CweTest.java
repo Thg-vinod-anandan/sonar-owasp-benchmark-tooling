@@ -41,4 +41,15 @@ public class CweTest {
     assertThat(cwe.getNegativeAccuracyPercentage()).isGreaterThanOrEqualTo((float)50.0).isLessThanOrEqualTo((float)51.0);
   }
 
+  @Test
+  public void testMundane() {
+
+    Cwe cwe = new Cwe(111);
+
+    String ruleKey = "S456";
+    cwe.addRuleKey(ruleKey);
+    assertThat(cwe.getRuleKeys()).hasSize(1);
+    assertThat(cwe.getRuleKeys()).contains(ruleKey);
+  }
+
 }

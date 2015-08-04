@@ -33,12 +33,10 @@ public class Reporter {
 
   public Reporter() {
     java.net.URL url = this.getClass().getResource("/service");
-    if (url != null) {
-      try {
-        css = new java.util.Scanner(new File(url.getPath() + "/report.css"), "UTF8").useDelimiter("\\Z").next();
-      } catch (FileNotFoundException e) {
-        LOGGER.log(Level.WARNING, "CSS file not found", e);
-      }
+    try {
+      css = new java.util.Scanner(new File(url.getPath() + "/report.css"), "UTF8").useDelimiter("\\Z").next();
+    } catch (FileNotFoundException e) {
+      LOGGER.log(Level.WARNING, "CSS file not found", e);
     }
   }
 

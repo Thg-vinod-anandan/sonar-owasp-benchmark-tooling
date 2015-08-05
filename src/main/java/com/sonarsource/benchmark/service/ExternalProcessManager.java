@@ -77,7 +77,7 @@ public class ExternalProcessManager {
     if (orchestrator == null) {
       orchestrator = Orchestrator
               .builderEnv()
-              .setServerProperty("sonar.web.javaOpts", "-Xmx1G -XX:MaxPermSize=100m -XX:+HeapDumpOnOutOfMemoryError")
+              .setServerProperty("sonar.web.javaOpts", "-Xmx2G -Xms1G -XX:MaxPermSize=100m -XX:+HeapDumpOnOutOfMemoryError -server")
               .setOrchestratorProperty("sonar.runtimeVersion", SONAR_VERSION)
               .setOrchestratorProperty("orchestrator.updateCenterUrl",
                       "http://update.sonarsource.org/update-center-dev.properties")

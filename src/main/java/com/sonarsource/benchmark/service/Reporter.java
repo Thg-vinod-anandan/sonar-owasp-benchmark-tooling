@@ -43,7 +43,8 @@ public class Reporter {
   public void generateReports(DataMarshaller gatherer) {
 
     StringBuilder sb = getHtmlStringBuilder();
-    sb.append("<table><tr><th rowspan='2'>CWE</th>")
+    sb.append("<h2>OWASP Benchmark results - Java</h2>")
+            .append("<table><tr><th rowspan='2'>CWE</th>")
             .append("<th rowspan='2'># rules</th><th rowspan='2'># issues</th>")
             .append("<th colspan='2'>True</th><th colspan='2'>False</th>")
             .append("<th>Accuracy</th></tr>")
@@ -82,8 +83,17 @@ public class Reporter {
     addLinkedCweId(cwe, sb);
     sb.append("</h2>");
 
+    sb.append("<a href='summary.html'>Back to Summary</a><br/>");
     sb.append("<a href='#fp'>False Positives (").append(cwe.getFalsePositives().size()).append(")</a> | ");
     sb.append("<a href='#fn'>False Negatives (").append(cwe.getFalseNegatives().size()).append(")</a>");
+
+    sb.append("<h3>Rules</h3>");
+    for (String key : cwe.getRuleKeys()) {
+      String k = key.split(":")[1];
+      sb.append("<a href='http://jira.sonarsource.com/browse/RSPEC-")
+              .append(k.replaceAll("S", ""))
+              .append("'>").append(k).append("</a><br/>");
+    }
 
     sb.append("<a id='fp' name='fp'></a><h3>False Positives (").append(cwe.getFalsePositives().size()).append(")</h3>");
 

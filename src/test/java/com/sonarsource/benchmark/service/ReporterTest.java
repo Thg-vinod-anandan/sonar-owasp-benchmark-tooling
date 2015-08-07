@@ -57,6 +57,7 @@ public class ReporterTest {
 
     try {
       cwe = tu.getDataMarshallerWithBenchmarkTestsAndCwes().getCweMap().get("CWE-78");
+      cwe.addRuleKey("squid:S2092");
 
       report = reporter.generateBadResultsReport(cwe);
 

@@ -56,8 +56,14 @@ public class SynchronousAnalyzer {
       if (count % logFrequency == 0) {
         LOGGER.info("Waiting for analysis reports to be integrated");
       }
-      String response = server.post(RELATIVE_URL, Collections.<String, Object>emptyMap());
-      empty = "true".equals(response);
+      try {
+        String response = server.post(RELATIVE_URL, Collections.<String, Object>emptyMap());
+        empty = "true".equals(response);
+      } catch (IllegalStateException ise) {
+        if (!"Unable to use reflection on SonarClient".equals(ise.getMessage())) {
+          throw ise;
+        }
+      }
       Uninterruptibles.sleepUninterruptibly(delayMs, TimeUnit.MILLISECONDS);
       count++;
     }

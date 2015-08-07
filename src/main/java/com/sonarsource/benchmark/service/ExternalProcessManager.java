@@ -6,7 +6,6 @@
 package com.sonarsource.benchmark.service;
 
 import com.sonar.orchestrator.Orchestrator;
-import com.sonar.orchestrator.build.SonarRunner;
 import com.sonarsource.benchmark.domain.ReportException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -16,6 +15,7 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 
@@ -50,24 +50,29 @@ public class ExternalProcessManager {
 
     LOGGER.info("Analzying project at " + targetProject);
 
-    SonarRunner build = SonarRunner.create(targetProject.toFile())
-            .setEnvironmentVariable("SONAR_RUNNER_OPTS", "-Xmx2048m -server")
-            .setProperty("sonar.importSources", "false")
-            .setProperty("sonar.skipDesign", "true")
-            .setProperty("sonar.scm.disabled", "true")
-            .setProperty("sonar.cpd.exclusions", "**/*.java")
-            .setProjectKey("project")
-            .setProjectName("project")
-            .setProjectVersion("1")
-            .setSourceEncoding("UTF-8")
-            .setSourceDirs("src/main/java")
-            .setProperty("sonar.java.binaries", "target/classes");
-            // sonar.java.libraries
+    InvocationRequest request = new DefaultInvocationRequest();
 
-    orchestrator.executeBuild(build, false);
-    // query server every minute, 1=log each query result
-    new SynchronousAnalyzer(orchestrator.getServer(), 60 * 1000, 1).waitForDone();
+    Properties props = new Properties();
+    props.put("sonar.host.url", orchestrator.getServer().getUrl());
+    props.put("sonar.jdbc.url", orchestrator.getDatabase().getClient().getUrl());
+    props.put("sonar.scm.disabled", "true");
+    props.put("sonar.cpd.exclusions", "**/*.java");
+    props.put("sonar.importSources", "false");
+    props.put("sonar.skipDesign", "true");
+    props.put("sonar.exclusions", "**/*.xml");
 
+    request.setPomFile(targetProject.resolve("pom.xml").toFile())
+            .setGoals(Arrays.asList("sonar:sonar"))
+            .setMavenOpts("-Xmx2048m -server")
+            .setProperties(props);
+
+    Invoker invoker = new DefaultInvoker();
+    try {
+      invoker.execute(request);
+      new SynchronousAnalyzer(orchestrator.getServer(), 60 * 1000, 1).waitForDone();
+    } catch (MavenInvocationException e) {
+      throw new ReportException(e);
+    }
   }
 
   public String startOrchestrator() {

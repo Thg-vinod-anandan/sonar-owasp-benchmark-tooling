@@ -66,25 +66,7 @@ public class DataMarshaller {
 
     LOGGER.info("Reading expected results");
 
-    File file = null;
-
-    File dir = path.resolve(".").toFile();
-    if (dir.isDirectory()) {
-      List<String> resultsFileNames = new ArrayList<>();
-      File[] files = dir.listFiles();
-      for (File f : files) {
-        if (f.isFile() && f.getName().matches("expectedresults.*\\.csv")) {
-          resultsFileNames.add(f.getName());
-        }
-      }
-      if (resultsFileNames.size() == 1) {
-        file = path.resolve(resultsFileNames.get(0)).toFile();
-      } else if (!resultsFileNames.isEmpty()){
-        Collections.sort(resultsFileNames);
-        file = path.resolve((resultsFileNames.get(resultsFileNames.size()-1))).toFile();
-      }
-
-    }
+    File file = getExpectedResultsFile(path);
 
     try {
       if (file != null) {
@@ -112,6 +94,29 @@ public class DataMarshaller {
     } catch (IOException e) {
       throw new ReportException(e);
     }
+  }
+
+  protected File getExpectedResultsFile(Path path) {
+
+    File file = null;
+
+    File dir = path.toFile();
+    if (dir.isDirectory()) {
+      List<String> resultsFileNames = new ArrayList<>();
+      File[] files = dir.listFiles();
+      for (File f : files) {
+        if (f.isFile() && f.getName().matches("expectedresults.*\\.csv")) {
+          resultsFileNames.add(f.getName());
+        }
+      }
+      if (resultsFileNames.size() == 1) {
+        file = path.resolve(resultsFileNames.get(0)).toFile();
+      } else if (!resultsFileNames.isEmpty()){
+        Collections.sort(resultsFileNames);
+        file = path.resolve(resultsFileNames.get(resultsFileNames.size()-1)).toFile();
+      }
+
+    } return file;
   }
 
   public void activateCweRules(String instance) {

@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,30 +66,49 @@ public class DataMarshaller {
 
     LOGGER.info("Reading expected results");
 
-    File file = path.resolve("expectedresults-1.1.csv").toFile();
-    try {
+    File file = null;
 
-      List<String> lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-      for (int i = 1; i < lines.size(); i++ ) {
-        String line = lines.get(i);
-        String[] pieces = line.split(",");
-
-        String fileName = pieces[0];
-        int cweNumber = Integer.parseInt(pieces[3]);
-        String cweId = "CWE-" + cweNumber;
-
-        BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
-        btMap.put(fileName, bt);
-
-        Cwe cwe = cweMap.get(cweId);
-        if (cwe == null) {
-          cwe = new Cwe(cweNumber);
-          cweMap.put(cweId, cwe);
+    File dir = path.resolve(".").toFile();
+    if (dir.isDirectory()) {
+      List<String> resultsFileNames = new ArrayList<>();
+      File[] files = dir.listFiles();
+      for (File f : files) {
+        if (f.isFile() && f.getName().matches("expectedresults.*\\.csv")) {
+          resultsFileNames.add(f.getName());
         }
-        cwe.addBenchmarkSample(bt);
-
+      }
+      if (resultsFileNames.size() == 1) {
+        file = path.resolve(resultsFileNames.get(0)).toFile();
+      } else if (!resultsFileNames.isEmpty()){
+        Collections.sort(resultsFileNames);
+        file = path.resolve((resultsFileNames.get(resultsFileNames.size()-1))).toFile();
       }
 
+    }
+
+    try {
+      if (file != null) {
+        List<String> lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+        for (int i = 1; i < lines.size(); i++) {
+          String line = lines.get(i);
+          String[] pieces = line.split(",");
+
+          String fileName = pieces[0];
+          int cweNumber = Integer.parseInt(pieces[3]);
+          String cweId = "CWE-" + cweNumber;
+
+          BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
+          btMap.put(fileName, bt);
+
+          Cwe cwe = cweMap.get(cweId);
+          if (cwe == null) {
+            cwe = new Cwe(cweNumber);
+            cweMap.put(cweId, cwe);
+          }
+          cwe.addBenchmarkSample(bt);
+
+        }
+      }
     } catch (IOException e) {
       throw new ReportException(e);
     }

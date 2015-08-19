@@ -31,6 +31,7 @@ public class DataMarshaller {
   private Map<String, Cwe> cweMap = new HashMap<>();
   private Map<String, BenchmarkSample> btMap = new HashMap<>();
   private Fetcher fetcher = new Fetcher();
+  private List<JSONObject> rawIssues = null;
 
 
   public void addIssuesToBenchmarkTests(String instance) {
@@ -41,6 +42,8 @@ public class DataMarshaller {
   }
 
   protected void handleIssues(List<JSONObject> jsonIssues) {
+
+    rawIssues = jsonIssues;
 
     for (Object obj : jsonIssues) {
       JSONObject jObj = (JSONObject) obj;
@@ -116,7 +119,8 @@ public class DataMarshaller {
         file = path.resolve(resultsFileNames.get(resultsFileNames.size()-1)).toFile();
       }
 
-    } return file;
+    }
+    return file;
   }
 
   public void activateCweRules(String instance) {
@@ -157,4 +161,8 @@ public class DataMarshaller {
     return cweMap;
   }
 
+  public List<JSONObject> getRawIssues() {
+
+    return rawIssues;
+  }
 }

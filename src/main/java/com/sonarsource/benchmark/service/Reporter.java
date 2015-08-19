@@ -9,11 +9,14 @@ import com.sonarsource.benchmark.domain.BenchmarkSample;
 import com.sonarsource.benchmark.domain.Constants;
 import com.sonarsource.benchmark.domain.Cwe;
 import com.sonarsource.benchmark.domain.ReportException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +45,8 @@ public class Reporter {
 
   public void generateReports(DataMarshaller gatherer) {
 
+    writeJsonReport(gatherer.getRawIssues());
+
     StringBuilder sb = getHtmlStringBuilder();
     sb.append("<h2>OWASP Benchmark results - Java</h2>")
             .append("<table><tr><th rowspan='2'>CWE</th>")
@@ -69,6 +74,15 @@ public class Reporter {
     sb.append(TABLE_CLOSE);
 
     writeFile(REPORT_PATH + "summary.html", sb.toString());
+  }
+
+  public void writeJsonReport(List<JSONObject> issues) {
+
+    JSONArray jsonArray = new JSONArray();
+    jsonArray.addAll(issues);
+
+    writeFile(REPORT_PATH + "raw.json", jsonArray.toJSONString());
+
   }
 
   public void writeBadResultsReport(Cwe cwe) {

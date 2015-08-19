@@ -6,6 +6,7 @@
 package com.sonarsource.benchmark.service;
 
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.locator.FileLocation;
 import com.sonarsource.benchmark.domain.ReportException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -13,6 +14,7 @@ import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Properties;
@@ -29,14 +31,18 @@ public class ExternalProcessManager {
   private Orchestrator orchestrator = null;
 
 
-  public void compile(Path targetProject) {
+  public void compile(Path targetProject, String command) {
 
-    LOGGER.info("Compiling project at " + targetProject);
+    LOGGER.info(command + "ing project at " + targetProject);
+
+    Properties props = new Properties();
+    props.put("skipTests", "true");
 
     InvocationRequest request = new DefaultInvocationRequest();
 
     request.setPomFile(targetProject.resolve("pom.xml").toFile());
-    request.setGoals(Arrays.asList("compile"));
+    request.setGoals(Arrays.asList(command));
+    request.setProperties(props);
 
     Invoker invoker = new DefaultInvoker();
     try {
@@ -75,10 +81,9 @@ public class ExternalProcessManager {
     }
   }
 
-  public String startOrchestrator() {
+  public String startOrchestrator(File plugin) {
 
     LOGGER.info("Starting platform");
-
     if (orchestrator == null) {
       orchestrator = Orchestrator
               .builderEnv()
@@ -87,8 +92,9 @@ public class ExternalProcessManager {
               .setOrchestratorProperty("orchestrator.updateCenterUrl",
                       "http://update.sonarsource.org/update-center-dev.properties")
               .setOrchestratorProperty("sonar.jdbc.dialect", "h2")
+              .addPlugin(FileLocation.of(plugin))
+              .setMainPluginKey("java")
 
-              .setOrchestratorProperty("javaVersion", "DEV").addPlugin("java")
               .build();
 
       orchestrator.start();
@@ -104,6 +110,19 @@ public class ExternalProcessManager {
       orchestrator.stop();
       orchestrator = null;
     }
+  }
+
+  public File getExactFileName(Path path, String pattern) {
+
+    File file = path.toFile();
+    if (file.isDirectory()) {
+      for (File f : file.listFiles()){
+        if (f.getName().matches(pattern)) {
+          return f;
+        }
+      }
+    }
+    return null;
   }
 
 }

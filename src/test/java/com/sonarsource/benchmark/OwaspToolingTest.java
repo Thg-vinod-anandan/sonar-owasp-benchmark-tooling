@@ -12,6 +12,7 @@ import com.sonarsource.benchmark.service.ExternalProcessManager;
 import com.sonarsource.benchmark.service.Reporter;
 import org.junit.Test;
 
+import java.io.File;
 import java.nio.file.Path;
 
 
@@ -22,19 +23,25 @@ public class OwaspToolingTest {
     if("true".equals(System.getProperty("reports.generation", "false"))) {
 
       Fetcher fetcher = new Fetcher();
-      Path path = fetcher.getFilesFromUrl(Constants.BENCHMARK_GIT_PROJECT + Constants.BENCHMARK_ZIP_PATH);
+      ExternalProcessManager epm = new ExternalProcessManager();
+
+      Path pluginProject = fetcher.getFilesFromUrl(Constants.JAVA_PLUGIN_GIT_PROJECT + Constants.GITHUB_ZIP_PATH);
+      epm.compile(pluginProject, "install");
+
+      File pluginJar = epm.getExactFileName(pluginProject.resolve("sonar-java-plugin/target"), "sonar-java-plugin-.*SNAPSHOT.jar");
+
+      Path benchmarkProject = fetcher.getFilesFromUrl(Constants.BENCHMARK_GIT_PROJECT + Constants.GITHUB_ZIP_PATH);
 
       DataMarshaller marshal = new DataMarshaller();
-      marshal.readBenchmarkTests(path);
+      marshal.readBenchmarkTests(benchmarkProject);
 
-      ExternalProcessManager epm = new ExternalProcessManager();
-      epm.compile(path);
+      epm.compile(benchmarkProject, "compile");
 
-      String instance = epm.startOrchestrator();
+      String instance = epm.startOrchestrator(pluginJar);
 
       marshal.activateCweRules(instance);
 
-      epm.analyze(path);
+      epm.analyze(benchmarkProject);
 
       marshal.addIssuesToBenchmarkTests(instance);
 

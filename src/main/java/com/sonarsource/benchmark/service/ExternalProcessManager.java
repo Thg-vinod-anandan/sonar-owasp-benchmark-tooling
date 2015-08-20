@@ -6,6 +6,7 @@
 package com.sonarsource.benchmark.service;
 
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.locator.FileLocation;
 import com.sonarsource.benchmark.domain.ReportException;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
@@ -85,17 +86,25 @@ public class ExternalProcessManager {
 
     LOGGER.info("Starting platform");
     if (orchestrator == null) {
-      orchestrator = Orchestrator
-              .builderEnv()
+
+
+      OrchestratorBuilder builder = Orchestrator.builderEnv()
               .setServerProperty("sonar.web.javaOpts", "-Xmx2G -Xms1G -XX:MaxPermSize=100m -XX:+HeapDumpOnOutOfMemoryError -server")
               .setOrchestratorProperty("sonar.runtimeVersion", SONAR_VERSION)
               .setOrchestratorProperty("orchestrator.updateCenterUrl",
                       "http://update.sonarsource.org/update-center-dev.properties")
-              .setOrchestratorProperty("sonar.jdbc.dialect", "h2")
-              .addPlugin(FileLocation.of(plugin))
-              .setMainPluginKey("java")
+              .setOrchestratorProperty("sonar.jdbc.dialect", "h2");
 
-              .build();
+      if (plugin != null && plugin.exists()) {
+        builder.addPlugin(FileLocation.of(plugin))
+                .setMainPluginKey("java");
+      } else {
+        builder.setOrchestratorProperty("orchestrator.updateCenterUrl",
+                    "http://update.sonarsource.org/update-center-dev.properties")
+                .setOrchestratorProperty("javaVersion", "LATEST_RELEASE").addPlugin("java");
+      }
+
+      orchestrator = builder.build();
 
       orchestrator.start();
       LOGGER.info("Platform available at " + orchestrator.getServer().getUrl());

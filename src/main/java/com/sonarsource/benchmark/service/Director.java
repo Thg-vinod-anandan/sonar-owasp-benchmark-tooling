@@ -17,12 +17,13 @@ import java.util.logging.Logger;
 
 public class Director {
 
+  protected Path pathToBenchmarkProject;
+
   private static final Logger LOGGER = Logger.getLogger(Director.class.getName());
 
   private Fetcher fetcher = new Fetcher();
   private ExternalProcessManager epm = new ExternalProcessManager();
 
-  private Path pathToBenchmarkProject;
   private String instance;
   private boolean buildSnapshot = false;
 
@@ -79,7 +80,4 @@ public class Director {
     this.buildSnapshot = buildSnapshot;
   }
 
-  protected Path getPathToBenchmarkProject(){
-    return pathToBenchmarkProject;
-  }
 }

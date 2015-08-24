@@ -16,7 +16,7 @@ public class DirectorTest {
   public void testSetPathToBenchmarkProject() {
     Director director = new Director();
     director.setPathToBenchmarkProject("foo/blah");
-    assertThat(director.getPathToBenchmarkProject()).isNotNull();
+    assertThat(director.pathToBenchmarkProject).isNotNull();
   }
 
 }

@@ -12,6 +12,10 @@ import com.sonarsource.benchmark.service.Director;
 
 public class Main {
 
+  private Main(){
+    // this space intentionally left blank
+  }
+
   public static void main(String [] args) {
 
     Settings settings = new Settings();

@@ -54,7 +54,7 @@ public class Director {
       marshal.activateCweRules(instance);
     }
 
-    epm.analyze(pathToBenchmarkProject);
+    epm.analyze(pathToBenchmarkProject, instance);
 
     marshal.addIssuesToBenchmarkTests(instance);
 

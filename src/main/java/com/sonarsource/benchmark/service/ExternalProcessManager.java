@@ -14,6 +14,7 @@ import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.fest.util.Strings;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -53,15 +54,23 @@ public class ExternalProcessManager {
     }
   }
 
-  public void analyze(Path targetProject) {
+  public void analyze(Path targetProject, String instance) {
 
     LOGGER.info("Analzying project at " + targetProject);
 
     InvocationRequest request = new DefaultInvocationRequest();
 
+    String server = instance;
+    if (Strings.isNullOrEmpty(server)){
+      server = orchestrator.getServer().getUrl();
+    }
+
     Properties props = new Properties();
-    props.put("sonar.host.url", orchestrator.getServer().getUrl());
-    props.put("sonar.jdbc.url", orchestrator.getDatabase().getClient().getUrl());
+    props.put("sonar.host.url", server);
+
+    if (orchestrator != null) {
+      props.put("sonar.jdbc.url", orchestrator.getDatabase().getClient().getUrl());
+    }
     props.put("sonar.scm.disabled", "true");
     props.put("sonar.cpd.exclusions", "**/*.java");
     props.put("sonar.importSources", "false");
@@ -76,7 +85,7 @@ public class ExternalProcessManager {
     Invoker invoker = new DefaultInvoker();
     try {
       invoker.execute(request);
-      new SynchronousAnalyzer(orchestrator.getServer(), 60 * 1000, 1).waitForDone();
+      new SynchronousAnalyzer(server, 60 * 1000, 1).waitForDone();
     } catch (MavenInvocationException e) {
       throw new ReportException(e);
     }

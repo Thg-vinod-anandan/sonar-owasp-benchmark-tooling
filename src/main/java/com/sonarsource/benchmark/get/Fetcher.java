@@ -78,7 +78,7 @@ public class Fetcher {
 
     WebTarget webResource = client.target(url);
 
-    MultivaluedMap<String, String> formData = new MultivaluedHashMap<String, String>();
+    MultivaluedMap<String, String> formData = new MultivaluedHashMap<>();
     for (Map.Entry<String,String> entry : params.entrySet()) {
       formData.add(entry.getKey(), entry.getValue());
     }

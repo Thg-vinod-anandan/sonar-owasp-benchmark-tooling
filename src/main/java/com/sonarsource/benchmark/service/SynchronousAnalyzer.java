@@ -34,8 +34,8 @@ public class SynchronousAnalyzer {
 
 
   public SynchronousAnalyzer(Server server) {
-    // check every 100ms and log every seconds
-    this(server, 100L, 10);
+    // check every 1s and log every 10 seconds
+    this(server, 1000L, 10);
   }
 
   public SynchronousAnalyzer(String instance, long delayMs, int logFrequency) {
@@ -69,7 +69,8 @@ public class SynchronousAnalyzer {
   private void doWaitForDone() {
     boolean empty = false;
     int count = 0;
-    while (!empty) {
+    while (!empty && count < 9000) {
+      Uninterruptibles.sleepUninterruptibly(delayMs, TimeUnit.MILLISECONDS);
       if (count % logFrequency == 0) {
         LOGGER.info("Waiting for analysis reports to be integrated");
       }
@@ -81,7 +82,6 @@ public class SynchronousAnalyzer {
           throw ise;
         }
       }
-      Uninterruptibles.sleepUninterruptibly(delayMs, TimeUnit.MILLISECONDS);
       count++;
     }
   }

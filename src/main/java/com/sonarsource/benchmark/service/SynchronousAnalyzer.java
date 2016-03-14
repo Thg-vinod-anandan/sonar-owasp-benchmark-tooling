@@ -8,6 +8,7 @@ package com.sonarsource.benchmark.service;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.sonar.orchestrator.container.Server;
+import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.wsclient.SonarClient;
@@ -58,18 +59,10 @@ public class SynchronousAnalyzer {
     }
   }
 
-  long getDelayMs() {
-    return delayMs;
-  }
-
-  int getLogFrequency() {
-    return logFrequency;
-  }
-
   private void doWaitForDone() {
     boolean empty = false;
     int count = 0;
-    while (!empty && count < 9000) {
+    while (!empty && count < 900) {
       Uninterruptibles.sleepUninterruptibly(delayMs, TimeUnit.MILLISECONDS);
       if (count % logFrequency == 0) {
         LOGGER.info("Waiting for analysis reports to be integrated");
@@ -93,8 +86,10 @@ public class SynchronousAnalyzer {
       Object requestFactory = field.get(adminWsClient());
       Method post = requestFactory.getClass().getDeclaredMethod("post", String.class, Map.class);
       return (String) post.invoke(requestFactory, relativeUrl, params);
-    } catch (Exception e) {
+    } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException e) {
       throw new IllegalStateException("Unable to use reflection on SonarClient", e);
+    } catch (InvocationTargetException e) {
+      throw new IllegalStateException(e);
     }
   }
 

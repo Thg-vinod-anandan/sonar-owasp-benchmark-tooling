@@ -62,7 +62,7 @@ public class SynchronousAnalyzer {
   private void doWaitForDone() {
     boolean empty = false;
     int count = 0;
-    while (!empty && count < 900) {
+    while (!empty && count < 90) {
       Uninterruptibles.sleepUninterruptibly(delayMs, TimeUnit.MILLISECONDS);
       if (count % logFrequency == 0) {
         LOGGER.info("Waiting for analysis reports to be integrated");
@@ -86,9 +86,9 @@ public class SynchronousAnalyzer {
       Object requestFactory = field.get(adminWsClient());
       Method post = requestFactory.getClass().getDeclaredMethod("post", String.class, Map.class);
       return (String) post.invoke(requestFactory, relativeUrl, params);
-    } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException e) {
+    } catch (NoSuchFieldException | IllegalAccessException e) {
       throw new IllegalStateException("Unable to use reflection on SonarClient", e);
-    } catch (InvocationTargetException e) {
+    } catch (NoSuchMethodException | InvocationTargetException e) {
       throw new IllegalStateException(e);
     }
   }

@@ -62,7 +62,7 @@ public class SynchronousAnalyzer {
   private void doWaitForDone() {
     boolean empty = false;
     int count = 0;
-    while (!empty && count < 90) {
+    while (!empty && count < 15) {
       Uninterruptibles.sleepUninterruptibly(delayMs, TimeUnit.MILLISECONDS);
       if (count % logFrequency == 0) {
         LOGGER.info("Waiting for analysis reports to be integrated");

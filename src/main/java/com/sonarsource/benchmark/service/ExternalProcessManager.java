@@ -108,9 +108,7 @@ public class ExternalProcessManager {
         builder.addPlugin(FileLocation.of(plugin))
                 .setMainPluginKey("java");
       } else {
-        builder.setOrchestratorProperty("orchestrator.updateCenterUrl",
-                    "http://update.sonarsource.org/update-center-dev.properties")
-                .setOrchestratorProperty("javaVersion", "LATEST_RELEASE").addPlugin("java");
+        builder.setOrchestratorProperty("javaVersion", "LATEST_RELEASE").addPlugin("java");
       }
 
       orchestrator = builder.build();

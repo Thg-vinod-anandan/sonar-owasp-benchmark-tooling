@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sonarsource.parent</groupId>
 		<artifactId>parent</artifactId>
-		<version>32</version>
+		<version>33</version>
 	</parent>
 
 	<groupId>com.sonarsource.benchmark</groupId>
@@ -33,6 +33,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<gitRepositoryName>sonar-owasp-benchmark-tooling</gitRepositoryName>
 	</properties>
 
 	<build>

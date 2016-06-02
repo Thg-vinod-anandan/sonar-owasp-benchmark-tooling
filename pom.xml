@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.sonarsource.parent</groupId>
 		<artifactId>parent</artifactId>
-		<version>33</version>
+		<version>35</version>
 	</parent>
 
 	<groupId>com.sonarsource.benchmark</groupId>
@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>org.sonarsource.orchestrator</groupId>
 			<artifactId>sonar-orchestrator</artifactId>
-			<version>3.10</version>
+			<version>3.11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.easytesting</groupId>

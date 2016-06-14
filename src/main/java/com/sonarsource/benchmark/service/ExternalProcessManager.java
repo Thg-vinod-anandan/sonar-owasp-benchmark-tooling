@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 public class ExternalProcessManager {
 
-  private static final String SONAR_VERSION = "5.4";
+  private static final String SONAR_VERSION = "5.6";
 
   private static final Logger LOGGER = Logger.getLogger(ExternalProcessManager.class.getName());
 

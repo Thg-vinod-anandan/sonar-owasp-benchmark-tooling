@@ -9,6 +9,7 @@ import com.sonarsource.benchmark.domain.BenchmarkSample;
 import com.sonarsource.benchmark.domain.Constants;
 import com.sonarsource.benchmark.domain.Cwe;
 import com.sonarsource.benchmark.domain.ReportException;
+import java.util.Scanner;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -36,10 +37,16 @@ public class Reporter {
 
   public Reporter() {
     java.net.URL url = this.getClass().getResource("/service");
+    Scanner scanner = null;
     try {
-      css = new java.util.Scanner(new File(url.getPath() + "/report.css"), "UTF8").useDelimiter("\\Z").next();
+      scanner = new java.util.Scanner(new File(url.getPath() + "/report.css"), "UTF8");
+      css = scanner.useDelimiter("\\Z").next();
     } catch (FileNotFoundException e) {
       LOGGER.log(Level.WARNING, "CSS file not found", e);
+    } finally {
+      if (scanner != null) {
+        scanner.close();
+      }
     }
   }
 
@@ -173,9 +180,7 @@ public class Reporter {
       writer.println(content);
       writer.close();
 
-    } catch (FileNotFoundException e) {
-      throw new ReportException(e);
-    } catch (UnsupportedEncodingException e) {
+    } catch (FileNotFoundException|UnsupportedEncodingException  e) {
       throw new ReportException(e);
     }
   }

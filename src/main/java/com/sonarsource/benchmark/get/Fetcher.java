@@ -101,7 +101,7 @@ public class Fetcher {
 
   }
 
-  private JSONObject getJsonFromUrl(String url) {
+  private static JSONObject getJsonFromUrl(String url) {
 
     Client client = ClientBuilder.newClient();
 

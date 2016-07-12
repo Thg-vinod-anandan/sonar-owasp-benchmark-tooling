@@ -75,28 +75,32 @@ public class DataMarshaller {
       if (file != null) {
         List<String> lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
         for (int i = 1; i < lines.size(); i++) {
-          String line = lines.get(i);
-          String[] pieces = line.split(",");
-
-          String fileName = pieces[0];
-          int cweNumber = Integer.parseInt(pieces[3]);
-          String cweId = "CWE-" + cweNumber;
-
-          BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
-          btMap.put(fileName, bt);
-
-          Cwe cwe = cweMap.get(cweId);
-          if (cwe == null) {
-            cwe = new Cwe(cweNumber);
-            cweMap.put(cweId, cwe);
-          }
-          cwe.addBenchmarkSample(bt);
+          mapFileToCwe(lines.get(i));
 
         }
       }
     } catch (IOException e) {
       throw new ReportException(e);
     }
+  }
+
+  protected void mapFileToCwe(String line) {
+
+    String[] pieces = line.split(",");
+
+    String fileName = pieces[0];
+    int cweNumber = Integer.parseInt(pieces[3]);
+    String cweId = "CWE-" + cweNumber;
+
+    BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
+    btMap.put(fileName, bt);
+
+    Cwe cwe = cweMap.get(cweId);
+    if (cwe == null) {
+      cwe = new Cwe(cweNumber);
+      cweMap.put(cweId, cwe);
+    }
+    cwe.addBenchmarkSample(bt);
   }
 
   protected File getExpectedResultsFile(Path path) {

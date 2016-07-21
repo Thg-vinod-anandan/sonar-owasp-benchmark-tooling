@@ -159,26 +159,19 @@ public class Reporter {
       return;
     }
 
-    PrintWriter writer = null;
-    try {
-      LOGGER.info("Writing " + fileName);
-      String path = fileName.replaceAll(" ", "_");
+    LOGGER.info("Writing " + fileName);
+    String path = fileName.replaceAll(" ", "_");
 
-      File file = new File(path);
-      File parent = file.getParentFile();
-      if (parent != null) {
-        parent.mkdirs();
-      }
+    File file = new File(path);
+    File parent = file.getParentFile();
+    if (parent != null) {
+      parent.mkdirs();
+    }
 
-      writer = new PrintWriter(file, "UTF-8");
+    try (PrintWriter writer = new PrintWriter(file, "UTF-8")){
       writer.println(content);
-
     } catch (FileNotFoundException|UnsupportedEncodingException  e) {
       throw new ReportException(e);
-    } finally {
-      if (writer != null) {
-        writer.close();
-      }
     }
   }
 

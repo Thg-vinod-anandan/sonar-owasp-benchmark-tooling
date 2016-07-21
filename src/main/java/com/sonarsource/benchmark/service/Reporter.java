@@ -172,10 +172,13 @@ public class Reporter {
 
       writer = new PrintWriter(file, "UTF-8");
       writer.println(content);
-      writer.close();
 
     } catch (FileNotFoundException|UnsupportedEncodingException  e) {
       throw new ReportException(e);
+    } finally {
+      if (writer != null) {
+        writer.close();
+      }
     }
   }
 

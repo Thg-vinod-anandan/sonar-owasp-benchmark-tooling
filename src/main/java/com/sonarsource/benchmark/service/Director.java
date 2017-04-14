@@ -44,7 +44,7 @@ public class Director {
       if (buildSnapshot) {
         LOGGER.info("Building latest Java plugin snapshot");
         Path pluginProject = fetcher.getFilesFromUrl(Constants.JAVA_PLUGIN_GIT_PROJECT + Constants.GITHUB_ZIP_PATH);
-        epm.compile(pluginProject, "install");
+        epm.compile(pluginProject, "install -DskipTests=true");
 
         pluginJar = epm.getExactFileName(pluginProject.resolve("sonar-java-plugin/target"), "sonar-java-plugin-.*SNAPSHOT.jar");
       }

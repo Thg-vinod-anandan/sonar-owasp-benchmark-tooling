@@ -9,7 +9,6 @@ import com.sonarsource.benchmark.domain.BenchmarkSample;
 import com.sonarsource.benchmark.domain.Constants;
 import com.sonarsource.benchmark.domain.Cwe;
 import com.sonarsource.benchmark.domain.ReportException;
-import java.util.Scanner;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -18,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -159,7 +159,7 @@ public class Reporter {
       return;
     }
 
-    LOGGER.info("Writing " + fileName);
+    LOGGER.log(Level.INFO, "Writing %s", fileName);
     String path = fileName.replaceAll(" ", "_");
 
     File file = new File(path);

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -56,7 +57,7 @@ public class DataMarshaller {
       if (bt != null) {
         bt.addIssueRule(ruleKey);
       } else {
-        LOGGER.info("Unrecognized fileName: " + testName);
+        LOGGER.log(Level.INFO, "Unrecognized fileName: %s", testName);
       }
     }
 

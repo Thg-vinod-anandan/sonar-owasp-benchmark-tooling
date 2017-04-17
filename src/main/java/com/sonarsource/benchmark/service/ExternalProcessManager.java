@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -35,7 +36,7 @@ public class ExternalProcessManager {
 
   public void compile(Path targetProject, String command) {
 
-    LOGGER.info(command + "ing project at " + targetProject);
+    LOGGER.log(Level.INFO, "%sing project at %s", new String[]{command, targetProject.toString()});
 
     Properties props = new Properties();
     props.put("skipTests", "true");
@@ -56,7 +57,7 @@ public class ExternalProcessManager {
 
   public void analyze(Path targetProject, String instance) {
 
-    LOGGER.info("Analzying project at " + targetProject);
+    LOGGER.log(Level.INFO,"Analzying project at %s", targetProject);
 
     InvocationRequest request = new DefaultInvocationRequest();
 

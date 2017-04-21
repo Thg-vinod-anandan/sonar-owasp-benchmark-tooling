@@ -159,7 +159,7 @@ public class Reporter {
       return;
     }
 
-    LOGGER.log(Level.INFO, "Writing %s", fileName);
+    LOGGER.log(Level.INFO, "Writing {0}", fileName);
     String path = fileName.replaceAll(" ", "_");
 
     File file = new File(path);

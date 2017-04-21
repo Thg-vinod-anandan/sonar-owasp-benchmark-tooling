@@ -57,7 +57,7 @@ public class DataMarshaller {
       if (bt != null) {
         bt.addIssueRule(ruleKey);
       } else {
-        LOGGER.log(Level.INFO, "Unrecognized fileName: %s", testName);
+        LOGGER.log(Level.INFO, "Unrecognized fileName: {0}", testName);
       }
     }
 

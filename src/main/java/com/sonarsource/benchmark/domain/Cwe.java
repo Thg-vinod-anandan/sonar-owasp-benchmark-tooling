@@ -18,6 +18,7 @@ public class Cwe {
   private List<BenchmarkSample> falseNegatives = new ArrayList<>();
   private List<BenchmarkSample> truePositives = new ArrayList<>();
   private List<BenchmarkSample> trueNegatives = new ArrayList<>();
+  private List<BenchmarkSample> unexpectedIssues = new ArrayList<>();
   private int issueCount = 0;
   private float positiveAccuracyPercentage = 0;
   private float negativeAccuracyPercentage = 0;
@@ -51,8 +52,7 @@ public class Cwe {
     int expectedPositives = truePositives.size() + falseNegatives.size();
     int expectedNegatives = trueNegatives.size() + falsePositives.size();
     positiveAccuracyPercentage = ((float)truePositives.size()/expectedPositives) * 100;
-    negativeAccuracyPercentage = ((float)trueNegatives.size()/expectedNegatives) * 100;
-
+    negativeAccuracyPercentage = ((float)falsePositives.size()/expectedNegatives) * 100;
   }
 
 
@@ -72,6 +72,14 @@ public class Cwe {
 
   public void addBenchmarkSample(BenchmarkSample bt) {
     benchmarkSamples.add(bt);
+  }
+
+  public void addUnexpectedIssue(BenchmarkSample bt) {
+    unexpectedIssues.add(bt);
+  }
+
+  public List<BenchmarkSample> getUnexpectedIssues(){
+    return unexpectedIssues;
   }
 
   public List<BenchmarkSample> getFalsePositives() {

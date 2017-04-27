@@ -15,12 +15,14 @@ public class BenchmarkSampleTest {
   @Test
   public void testBadResult() {
 
-    BenchmarkSample bs = new BenchmarkSample("file0001", true);
+    Cwe cwe = new Cwe(456);
+
+    BenchmarkSample bs = new BenchmarkSample("file0001", true, cwe);
     bs.addIssueRule("S123");
 
     assertThat(bs.isBadResult()).isFalse();
 
-    bs = new BenchmarkSample("file0002", false);
+    bs = new BenchmarkSample("file0002", false, cwe);
     bs.addIssueRule("S123");
 
     assertThat(bs.isBadResult()).isTrue();

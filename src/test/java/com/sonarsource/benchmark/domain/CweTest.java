@@ -16,18 +16,18 @@ public class CweTest {
   public void testSortResults() {
 
     Cwe cwe = new Cwe(456);
-    BenchmarkSample falseNeg = new BenchmarkSample("file0001", true);
+    BenchmarkSample falseNeg = new BenchmarkSample("file0001", true, cwe);
     cwe.addBenchmarkSample(falseNeg);
 
-    BenchmarkSample truePos = new BenchmarkSample("file0002", true);
+    BenchmarkSample truePos = new BenchmarkSample("file0002", true, cwe);
     truePos.addIssueRule("S123");
     cwe.addBenchmarkSample(truePos);
 
-    BenchmarkSample falsePos = new BenchmarkSample("file0003", false);
+    BenchmarkSample falsePos = new BenchmarkSample("file0003", false, cwe);
     falsePos.addIssueRule("S123");
     cwe.addBenchmarkSample(falsePos);
 
-    BenchmarkSample trueNeg = new BenchmarkSample("file0004", false);
+    BenchmarkSample trueNeg = new BenchmarkSample("file0004", false, cwe);
     cwe.addBenchmarkSample(trueNeg);
 
     cwe.sortResults();

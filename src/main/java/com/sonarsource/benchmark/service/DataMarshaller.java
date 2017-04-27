@@ -55,7 +55,12 @@ public class DataMarshaller {
       String testName = pieces[pieces.length - 1].replaceAll(".java", "");
       BenchmarkSample bt = btMap.get(testName);
       if (bt != null) {
-        bt.addIssueRule(ruleKey);
+        if (bt.getRelatedCwe().getRuleKeys().contains(ruleKey)) {
+          bt.addIssueRule(ruleKey);
+        } else {
+          getCweByRuleKey(ruleKey).addUnexpectedIssue(bt);
+        }
+
       } else {
         LOGGER.log(Level.INFO, "Unrecognized fileName: {0}", testName);
       }
@@ -65,6 +70,16 @@ public class DataMarshaller {
       cwe.sortResults();
     }
   }
+
+  public Cwe getCweByRuleKey(String ruleKey) {
+    for (Cwe cwe : cweMap.values()) {
+      if (cwe.getRuleKeys().contains(ruleKey)) {
+        return cwe;
+      }
+    }
+    return null;
+  }
+
 
   public void readBenchmarkTests(Path path) {
 
@@ -93,14 +108,15 @@ public class DataMarshaller {
     int cweNumber = Integer.parseInt(pieces[3]);
     String cweId = "CWE-" + cweNumber;
 
-    BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]));
-    btMap.put(fileName, bt);
-
     Cwe cwe = cweMap.get(cweId);
     if (cwe == null) {
       cwe = new Cwe(cweNumber);
       cweMap.put(cweId, cwe);
     }
+
+    BenchmarkSample bt = new BenchmarkSample(fileName, Boolean.valueOf(pieces[2]), cwe);
+    btMap.put(fileName, bt);
+
     cwe.addBenchmarkSample(bt);
   }
 

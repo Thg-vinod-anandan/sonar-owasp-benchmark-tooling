@@ -15,11 +15,13 @@ public class BenchmarkSample {
   boolean vulnerable;
   List<String> issueRules = new ArrayList<>();
   boolean badResult = false;
+  Cwe relatedCwe;
 
 
-  public BenchmarkSample(String fileName, boolean vulnerable) {
+  public BenchmarkSample(String fileName, boolean vulnerable, Cwe relatedCwe) {
 
     this.fileName = fileName;
+    this.relatedCwe = relatedCwe;
     this.vulnerable = vulnerable;
     if (vulnerable) {
       badResult = true;
@@ -52,5 +54,10 @@ public class BenchmarkSample {
 
   public int getIssueCount() {
     return issueRules.size();
+  }
+
+
+  public Cwe getRelatedCwe() {
+    return relatedCwe;
   }
 }

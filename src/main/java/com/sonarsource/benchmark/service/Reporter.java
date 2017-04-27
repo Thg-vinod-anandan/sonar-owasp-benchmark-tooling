@@ -53,8 +53,13 @@ public class Reporter {
             .append("<table><tr><th rowspan='2'>CWE</th>")
             .append("<th rowspan='2'># rules</th><th rowspan='2'># issues</th>")
             .append("<th colspan='2'>True</th><th colspan='2'>False</th>")
-            .append("<th>Accuracy</th></tr>")
+            .append("<th colspan='2'>Accuracy</th>")
+            .append("<th rowspan='2'>Score</th>")
+            .append("<th rowspan='2'>Unexpected</th>")
+            .append("</tr>")
             .append("<tr><th>Pos</th><th>Neg</th><th>Pos</th><th>Neg</th><th>Pos</th><th>Neg</th></tr>");
+
+    String twoDecimalPercent = "%.2f%%";
 
     for (Cwe cwe : gatherer.getCweMap().values()) {
 
@@ -68,9 +73,12 @@ public class Reporter {
               .append(TD).append(cwe.getTrueNegatives().size())
               .append(TD).append(cwe.getFalsePositives().size())
               .append(TD).append(cwe.getFalseNegatives().size())
-              .append(TD).append(A_HREF).append(cwe.getId()).append(".html#fp'>").append(String.format("%.2f%%", cwe.getPositiveAccuracyPercentage())).append("</a>")
-              .append(TD).append(A_HREF).append(cwe.getId()).append(".html#fn'>").append(String.format("%.2f%%", cwe.getNegativeAccuracyPercentage())).append("</a>")
-              .append("</tr>");
+              .append(TD).append(A_HREF).append(cwe.getId()).append(".html#fp'>").append(String.format(twoDecimalPercent, cwe.getPositiveAccuracyPercentage())).append("</a>")
+              .append(TD).append(A_HREF).append(cwe.getId()).append(".html#fn'>").append(String.format(twoDecimalPercent, cwe.getNegativeAccuracyPercentage())).append("</a>")
+              .append(TD).append(String.format(twoDecimalPercent,cwe.getPositiveAccuracyPercentage()-cwe.getNegativeAccuracyPercentage()))
+              .append(TD).append(cwe.getUnexpectedIssues().size())
+              .append("</td></tr>");
+
     }
     sb.append(TABLE_CLOSE);
 

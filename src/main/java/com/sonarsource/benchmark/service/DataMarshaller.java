@@ -58,7 +58,12 @@ public class DataMarshaller {
         if (bt.getRelatedCwe().getRuleKeys().contains(ruleKey)) {
           bt.addIssueRule(ruleKey);
         } else {
-          getCweByRuleKey(ruleKey).addUnexpectedIssue(bt);
+          Cwe cwe = getCweByRuleKey(ruleKey);
+          if (cwe != null) {
+            cwe.addUnexpectedIssue(bt);
+          } else {
+            LOGGER.log(Level.WARNING, "CWE not found for rule key: {0}", ruleKey);
+          }
         }
 
       } else {

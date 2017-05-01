@@ -89,8 +89,10 @@ public class Reporter {
 
     JSONArray jsonArray = new JSONArray();
     jsonArray.addAll(issues);
+    JSONObject obj = new JSONObject();
+    obj.put("issues", jsonArray);
 
-    writeFile(REPORT_PATH + "raw.json", jsonArray.toJSONString());
+    writeFile(REPORT_PATH + "raw.json", obj.toJSONString());
 
   }
 

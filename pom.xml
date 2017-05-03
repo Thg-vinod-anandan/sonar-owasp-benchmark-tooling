@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.sonarsource.parent</groupId>
+		<groupId>org.sonarsource.parent</groupId>
 		<artifactId>parent</artifactId>
-		<version>35</version>
+		<version>40</version>
 	</parent>
 
-	<groupId>com.sonarsource.benchmark</groupId>
+	<groupId>org.sonarsource.benchmark</groupId>
 	<artifactId>owasp-benchmark-tooling</artifactId>
 	<version>0.9-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -48,7 +48,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.sonarsource.benchmark.Main</mainClass>
+							<mainClass>org.sonarsource.benchmark.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -76,7 +76,7 @@
               </filters>
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.sonarsource.benchmark.Main</mainClass>
+									<mainClass>org.sonarsource.benchmark.Main</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
